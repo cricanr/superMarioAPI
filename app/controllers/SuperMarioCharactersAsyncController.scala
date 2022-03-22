@@ -99,9 +99,8 @@ class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents, ac
         Ok(foundCharacters.toString())
       case JsError(errors) => InternalServerError(errors.toString())
     }.getOrElse {
-//      TODO:
-//      val allCharacters = powerItems.map(characterName => SuperMarioCharacter(character = characterName, firstGame = powerItems(characterName).firstGame, power = calculatePower(speedItems(characterName), powerItems(characterName)), speed = speedItems(characterName).speed)).toList
-      Ok("")
+      val foundCharacters = powerItems.keys.map(characterName => SuperMarioCharacter(character = characterName, firstGame = powerItems(characterName).firstGame, power = calculatePower(speedItems(characterName), powerItems(characterName)), speed = speedItems(characterName).speed)).toList
+      Ok(foundCharacters.toString())
     }
 
   }
