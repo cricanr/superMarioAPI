@@ -1,13 +1,13 @@
 package controllers
 
-import javax.inject._
 import akka.actor.ActorSystem
 import csvparser.SuperMarioCharactersParser
 import models.{SearchRequest, SuperMarioCharacter, SuperMarioCharacterPowerModel, SuperMarioCharacterSpeedModel}
+import play.api.libs.json._
 import play.api.mvc._
 import query.QueryParameters
-import play.api.libs.json._
 
+import javax.inject._
 import scala.concurrent.ExecutionContext
 
 @Singleton
