@@ -3,7 +3,7 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET     /all-characters-sorted/:sortOrder   controllers.AsyncController.getAllCharactersSorted(sortOrder: String)
-GET     /all-characters             controllers.AsyncController.getAllCharacters
-#GET     /queryCharacters/:characterNames    controllers.AsyncController.queryCharacters(characterNames: List[String])
-GET     /message                    controllers.AsyncController.message
+GET     /allCharactersSorted    controllers.SuperMarioCharactersAsyncController.getAllCharactersSorted
+GET     /allCharacters          controllers.SuperMarioCharactersAsyncController.getAllCharacters
+POST    /searchCharacters      controllers.SuperMarioCharactersAsyncController.searchCharacters
+#GET     /message                controllers.SuperMarioCharactersAsyncController.message
