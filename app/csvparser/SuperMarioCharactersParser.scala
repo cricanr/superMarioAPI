@@ -1,16 +1,18 @@
 package csvparser
 
+import com.github.tototoshi.csv._
 import com.google.inject.Inject
+import models.SuperMarioCharactersPower.toCsv
+import models.SuperMarioCharactersSpeed.toSeq
+import models._
 
 import java.io.File
-import com.github.tototoshi.csv._
-import models.SuperMarioCharactersSpeed.toSeq
-import models.{SuperMarioCharacter, SuperMarioCharacterPowerModel, SuperMarioCharacterSpeedModel, SuperMarioCharactersPower, SuperMarioCharactersSpeed}
+import scala.io.Source
 
 trait ISuperMarioCharactersParser {
   def readAllItems(
-                       csvFilePath: String
-                     ): List[List[String]]
+                    csvFilePath: String
+                  ): List[List[String]]
 }
 
 class SuperMarioCharactersParser @Inject() extends ISuperMarioCharactersParser {
@@ -23,8 +25,8 @@ class SuperMarioCharactersParser @Inject() extends ISuperMarioCharactersParser {
   }
 
   def readAllItems(
-                       csvFilePath: String
-                     ): List[List[String]] = {
+                    csvFilePath: String
+                  ): List[List[String]] = {
     val reader = getReader(csvFilePath)
     reader.all().drop(1)
   }
@@ -53,16 +55,25 @@ class SuperMarioCharactersParser @Inject() extends ISuperMarioCharactersParser {
     writePowerLine(csvPowerFilePath, superMarioCharacter)
   }
 
-//  def updateCharacter(superMarioCharacter: SuperMarioCharacter): Unit = {
-//    val csvPowerFilePath = "app/resources/super-mario-characters-power.csv"
-//    val csvSpeedFilePath = "app/resources/super-mario-characters-speed.csv"
-//
-//    writeSpeedLine(csvSpeedFilePath, superMarioCharacter)
-//    writePowerLine(csvPowerFilePath, superMarioCharacter)
-//  }
+  def updateCharacter(superMarioCharacter: SuperMarioCharacter): Unit = {
+    val csvPowerFilePath = "app/resources/super-mario-characters-power.csv"
+    val csvSpeedFilePath = "app/resources/super-mario-characters-speed.csv"
+    val superMarioPowerModel = SuperMarioCharactersPower.apply(superMarioCharacter)
+    val superMarioSpeedModel = SuperMarioCharactersSpeed.apply(superMarioCharacter)
+
+    val allLinesPower = Source.fromFile(csvPowerFilePath).getLines.toSeq
+    val linesWithoutChangedCharacter = allLinesPower.filterNot(line => line.startsWith(s"${superMarioCharacter.name}|"))
+
+    val updatedLinesPower = linesWithoutChangedCharacter :+ toCsv(superMarioPowerModel)
+    reflect.io.File(csvPowerFilePath).writeAll(s"${updatedLinesPower.mkString("\n")}\n")
+
+    val allLinesSpeed = Source.fromFile(csvSpeedFilePath).getLines.toSeq
+    val linesSpeedWithoutChangedCharacter = allLinesSpeed.filterNot(line => line.startsWith(s"${superMarioCharacter.name}|"))
+
+    val updatedLinesSpeed = linesSpeedWithoutChangedCharacter :+ SuperMarioCharactersSpeed.toCsv(superMarioSpeedModel)
+    reflect.io.File(csvSpeedFilePath).writeAll(s"${updatedLinesSpeed.mkString("\n")}\n")
+  }
 }
-
-
 
 object SuperMarioCharactersParser {
   def getSuperMarioCharactersPowerFromCsvLine(

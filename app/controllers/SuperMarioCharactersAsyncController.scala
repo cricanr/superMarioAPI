@@ -113,20 +113,17 @@ class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents, ac
     val maybeJson = request.body.asJson
     val maybeSuperMarioCharacter = maybeJson.map(json => Json.fromJson[SuperMarioCharacter](json))
 
-//    maybeSuperMarioCharacter.map {
-//      case JsSuccess(superMarioCharacter, _) =>
-//        superMarioCharactersParser.updateCharacter(superMarioCharacter)
-//        Ok(superMarioCharacter.toString)
-//      case JsError(errors) => InternalServerError(errors.toString())
-//    }.getOrElse {
-//      BadRequest("Invalid input given in body")
-//    }
-
-
-    Ok(s"maybeSuperMarioCharacter: ${maybeSuperMarioCharacter.toString}")
+    maybeSuperMarioCharacter.map {
+      case JsSuccess(superMarioCharacter, _) =>
+        superMarioCharactersParser.updateCharacter(superMarioCharacter)
+        Ok(superMarioCharacter.toString)
+      case JsError(errors) => InternalServerError(errors.toString())
+    }.getOrElse {
+      BadRequest("Invalid input given in body")
+    }
   }
 
-  private def calculatePower(speedItem: SuperMarioCharacterSpeedModel, powerItem: SuperMarioCharacterPowerModel) = {
+  private def calculatePower(speedItem: SuperMarioCharacterSpeedModel, powerItem: SuperMarioCharacterPowerModel): Double = {
     powerItem.powerfulness * 100 / speedItem.speed
   }
 }

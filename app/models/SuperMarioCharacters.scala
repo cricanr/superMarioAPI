@@ -10,6 +10,10 @@ object SuperMarioCharactersPower {
   def toSeq(superMarioCharactersPower: SuperMarioCharactersPower): Seq[Any] = {
     Seq(superMarioCharactersPower.character, superMarioCharactersPower.firstGame, superMarioCharactersPower.powerfulness)
   }
+
+  def toCsv(superMarioCharactersPower: SuperMarioCharactersPower): String = {
+    s"${superMarioCharactersPower.character}|${superMarioCharactersPower.firstGame}|${superMarioCharactersPower.powerfulness}"
+  }
 }
 final case class SuperMarioCharactersSpeed(character: String, speed: Double)
 
@@ -20,6 +24,10 @@ object SuperMarioCharactersSpeed {
 
   def toSeq(superMarioCharactersSpeed: SuperMarioCharactersSpeed): Seq[Any] = {
     Seq(superMarioCharactersSpeed.character, superMarioCharactersSpeed.speed)
+  }
+
+  def toCsv(superMarioCharactersSpeed: SuperMarioCharactersSpeed): String = {
+    s"${superMarioCharactersSpeed.character}|${superMarioCharactersSpeed.speed}"
   }
 }
 
