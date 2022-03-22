@@ -88,18 +88,40 @@ class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents, ac
 
   def create: Action[AnyContent] = Action { request =>
     implicit val superMarioCharacterReads: Reads[SuperMarioCharacter] = Json.reads[SuperMarioCharacter]
+    val superMarioCharactersParser = new SuperMarioCharactersParser()
 
     val maybeJson = request.body.asJson
     val maybeSuperMarioCharacter = maybeJson.map(json => Json.fromJson[SuperMarioCharacter](json))
+
+    maybeSuperMarioCharacter.map {
+      case JsSuccess(superMarioCharacter, _) =>
+        superMarioCharactersParser.writeCharacter(superMarioCharacter)
+        Ok(superMarioCharacter.toString)
+      case JsError(errors) => InternalServerError(errors.toString())
+    }.getOrElse {
+      BadRequest("Invalid input given in body")
+    }
+
 
     Ok(s"maybeSuperMarioCharacter: ${maybeSuperMarioCharacter.toString}")
   }
 
   def update: Action[AnyContent] = Action { request =>
     implicit val superMarioCharacterReads: Reads[SuperMarioCharacter] = Json.reads[SuperMarioCharacter]
+    val superMarioCharactersParser = new SuperMarioCharactersParser()
 
     val maybeJson = request.body.asJson
     val maybeSuperMarioCharacter = maybeJson.map(json => Json.fromJson[SuperMarioCharacter](json))
+
+//    maybeSuperMarioCharacter.map {
+//      case JsSuccess(superMarioCharacter, _) =>
+//        superMarioCharactersParser.updateCharacter(superMarioCharacter)
+//        Ok(superMarioCharacter.toString)
+//      case JsError(errors) => InternalServerError(errors.toString())
+//    }.getOrElse {
+//      BadRequest("Invalid input given in body")
+//    }
+
 
     Ok(s"maybeSuperMarioCharacter: ${maybeSuperMarioCharacter.toString}")
   }
