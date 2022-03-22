@@ -20,10 +20,9 @@ class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents, ac
     val powerItems = allPowerItems.map(powerItemRaw =>
       SuperMarioCharactersParser.getSuperMarioCharactersPowerFromCsvLine(powerItemRaw)
     )
-
     val allCharacters = powerItems.map(powerItem => powerItem.character)
 
-    Ok(allCharacters.toString())
+    Ok(Json.toJson(allCharacters).toString())
   }
 
   def getAllCharactersSorted: Action[AnyContent] = Action { request =>
@@ -50,12 +49,10 @@ class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents, ac
       case None => allCharacters
     }
 
-    Ok(sortedCharacters.toString())
+    Ok(Json.toJson(sortedCharacters).toString())
   }
 
   def search: Action[AnyContent] = Action { request =>
-    implicit val searchRequestReads: Reads[SearchRequest] = Json.reads[SearchRequest]
-
     val maybeJson = request.body.asJson
     val maybeSearchRequest = maybeJson.map(json => Json.fromJson[SearchRequest](json))
 
@@ -77,17 +74,16 @@ class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents, ac
       case JsSuccess(searchRequest, _) =>
         val foundCharacterKeys = powerItems.keys.toList.filter(a => searchRequest.names.contains(a))
         val foundCharacters = foundCharacterKeys.map(characterName => SuperMarioCharacter(name = characterName, firstGame = powerItems(characterName).firstGame, power = calculatePower(speedItems(characterName), powerItems(characterName)), speed = speedItems(characterName).speed)).toList
-        Ok(foundCharacters.toString())
+        Ok(Json.toJson(foundCharacters).toString())
       case JsError(errors) => InternalServerError(errors.toString())
     }.getOrElse {
       val foundCharacters = powerItems.keys.map(characterName => SuperMarioCharacter(name = characterName, firstGame = powerItems(characterName).firstGame, power = calculatePower(speedItems(characterName), powerItems(characterName)), speed = speedItems(characterName).speed)).toList
-      Ok(foundCharacters.toString())
+      Ok(Json.toJson(foundCharacters).toString())
     }
 
   }
 
   def create: Action[AnyContent] = Action { request =>
-    implicit val superMarioCharacterReads: Reads[SuperMarioCharacter] = Json.reads[SuperMarioCharacter]
     val superMarioCharactersParser = new SuperMarioCharactersParser()
 
     val maybeJson = request.body.asJson
@@ -96,14 +92,11 @@ class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents, ac
     maybeSuperMarioCharacter.map {
       case JsSuccess(superMarioCharacter, _) =>
         superMarioCharactersParser.writeCharacter(superMarioCharacter)
-        Ok(superMarioCharacter.toString)
+        Ok(Json.toJson(superMarioCharacter).toString)
       case JsError(errors) => InternalServerError(errors.toString())
     }.getOrElse {
       BadRequest("Invalid input given in body")
     }
-
-
-    Ok(s"maybeSuperMarioCharacter: ${maybeSuperMarioCharacter.toString}")
   }
 
   def update: Action[AnyContent] = Action { request =>
@@ -116,7 +109,7 @@ class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents, ac
     maybeSuperMarioCharacter.map {
       case JsSuccess(superMarioCharacter, _) =>
         superMarioCharactersParser.updateCharacter(superMarioCharacter)
-        Ok(superMarioCharacter.toString)
+        Ok(Json.toJson(superMarioCharacter).toString)
       case JsError(errors) => InternalServerError(errors.toString())
     }.getOrElse {
       BadRequest("Invalid input given in body")

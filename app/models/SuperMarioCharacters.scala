@@ -1,5 +1,7 @@
 package models
 
+import play.api.libs.json.{Json, OWrites, Reads}
+
 final case class SuperMarioCharactersPower(character: String, firstGame: String, powerfulness: Double)
 
 object SuperMarioCharactersPower {
@@ -38,3 +40,8 @@ final case class SuperMarioCharacterSpeedModel(speed: Double)
 object SuperMarioCharacterSpeedModel
 
 final case class SuperMarioCharacter(name: String, firstGame: String, power: Double, speed: Double)
+
+object SuperMarioCharacter {
+  implicit val superMarioCharacterReads: Reads[SuperMarioCharacter] = Json.reads[SuperMarioCharacter]
+  implicit val superMarioCharacterWrites: OWrites[SuperMarioCharacter] = Json.writes[SuperMarioCharacter]
+}
