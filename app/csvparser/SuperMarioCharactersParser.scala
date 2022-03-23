@@ -71,14 +71,14 @@ class SuperMarioCharactersParser @Inject() extends ISuperMarioCharactersParser {
     updateSpeedLine(superMarioCharacter)
   }
 
-  private def updateSpeedLine(superMarioCharacter: SuperMarioCharacter) = {
+  private def updateSpeedLine(superMarioCharacter: SuperMarioCharacter): Unit = {
     val superMarioSpeedModel = SuperMarioCharactersSpeed.apply(superMarioCharacter)
     val linesSpeedWithoutChangedCharacter = allLinesSpeed.filterNot(line => line.startsWith(s"${superMarioCharacter.name}|"))
     val updatedLinesSpeed = linesSpeedWithoutChangedCharacter :+ SuperMarioCharactersSpeed.toCsv(superMarioSpeedModel)
     reflect.io.File(csvSpeedFilePath).writeAll(s"${updatedLinesSpeed.mkString("\n")}\n")
   }
 
-  private def updatePowerLine(superMarioCharacter: SuperMarioCharacter) = {
+  private def updatePowerLine(superMarioCharacter: SuperMarioCharacter): Unit = {
     val superMarioPowerModel = SuperMarioCharactersPower.apply(superMarioCharacter)
     val linesWithoutChangedCharacter = allLinesPower.filterNot(line => line.startsWith(s"${superMarioCharacter.name}|"))
     val updatedLinesPower = linesWithoutChangedCharacter :+ toCsv(superMarioPowerModel)
