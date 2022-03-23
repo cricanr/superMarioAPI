@@ -22,7 +22,7 @@ class SuperMarioCharactersAsyncController @Inject() (
 ) extends AbstractController(cc) {
 
   def getAllNames: Action[AnyContent] = Action {
-    val allCharacters = superMarioCharactersService.getAllNames
+    val allCharacters = superMarioCharactersService.getAllNames()
     Ok(Json.toJson(allCharacters).toString())
   }
 

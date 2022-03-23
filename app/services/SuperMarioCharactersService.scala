@@ -1,17 +1,12 @@
 package services
 
 import com.google.inject.Inject
-import csvparser.CSVFilePath.{PowernessCSVFilePath, SpeedCSVFilePath}
+import csvparser.SuperMarioCharactersParser.{csvPowerFilePath, csvSpeedFilePath}
 import csvparser.{ISuperMarioCharactersParser, SuperMarioCharactersParser}
-import models.{
-  SearchRequest,
-  SuperMarioCharacter,
-  SuperMarioCharacterPowerModel,
-  SuperMarioCharacterSpeedModel
-}
+import models.{SearchRequest, SuperMarioCharacter, SuperMarioCharacterPowerModel, SuperMarioCharacterSpeedModel}
 
 trait ISuperMarioCharactersService {
-  def getAllNames: List[String]
+  def getAllNames(csvFilePath: String = csvPowerFilePath): List[String]
   def getAllCharactersSorted(
       maybeSortOrderParam: Option[String]
   ): List[SuperMarioCharacter]
@@ -24,9 +19,9 @@ trait ISuperMarioCharactersService {
 class SuperMarioCharactersService @Inject() (
     superMarioCharactersParser: ISuperMarioCharactersParser
 ) extends ISuperMarioCharactersService {
-  def getAllNames: List[String] = {
+  def getAllNames(csvFilePath: String = csvPowerFilePath): List[String] = {
     val allPowerItems =
-      superMarioCharactersParser.readAllItems(PowernessCSVFilePath)
+      superMarioCharactersParser.readAllItems(csvPowerFilePath)
     val powerItems = allPowerItems.map(powerItemRaw =>
       SuperMarioCharactersParser.getSuperMarioCharactersPowerFromCsvLine(
         powerItemRaw
@@ -76,7 +71,7 @@ class SuperMarioCharactersService @Inject() (
 
   def readSpeedItems(): Map[String, SuperMarioCharacterSpeedModel] = {
     val allSpeedItems =
-      superMarioCharactersParser.readAllItems(SpeedCSVFilePath)
+      superMarioCharactersParser.readAllItems(csvSpeedFilePath)
     val speedItems = allSpeedItems
       .map(speedItemRaw =>
         SuperMarioCharactersParser.getSuperMarioCharactersSpeedFromCsvLineMap(
@@ -89,7 +84,7 @@ class SuperMarioCharactersService @Inject() (
 
   def readPowerItems(): Map[String, SuperMarioCharacterPowerModel] = {
     val allPowerItems =
-      superMarioCharactersParser.readAllItems(PowernessCSVFilePath)
+      superMarioCharactersParser.readAllItems(csvPowerFilePath)
     val powerItems = allPowerItems
       .map(powerItemRaw =>
         SuperMarioCharactersParser.getSuperMarioCharactersPowerFromCsvLineMap(
