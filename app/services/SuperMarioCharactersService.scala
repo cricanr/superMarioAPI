@@ -60,7 +60,7 @@ class SuperMarioCharactersService @Inject() (
         allCharacters.sortBy(characters => characters.power)(
           Ordering[Double].reverse
         )
-      case None => allCharacters
+      case _ => allCharacters
     }
 
     sortedCharacters
