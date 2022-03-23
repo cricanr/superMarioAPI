@@ -3,7 +3,12 @@ package services
 import com.google.inject.Inject
 import csvparser.SuperMarioCharactersParser.{csvPowerFilePath, csvSpeedFilePath}
 import csvparser.{ISuperMarioCharactersParser, SuperMarioCharactersParser}
-import models.{SearchRequest, SuperMarioCharacter, SuperMarioCharacterPowerModel, SuperMarioCharacterSpeedModel}
+import models.{
+  SearchRequest,
+  SuperMarioCharacter,
+  SuperMarioCharacterPowerModel,
+  SuperMarioCharacterSpeedModel
+}
 
 trait ISuperMarioCharactersService {
   def getAllNames(csvFilePath: String = csvPowerFilePath): List[String]

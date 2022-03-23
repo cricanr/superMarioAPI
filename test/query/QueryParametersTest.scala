@@ -3,7 +3,7 @@ package query
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-  class QueryParametersTest extends AnyWordSpec with Matchers {
+class QueryParametersTest extends AnyWordSpec with Matchers {
   "The QueryParameters" when {
     "calling apply on valid empty request parameters" should {
       "return nothing" in {
@@ -21,7 +21,9 @@ import org.scalatest.wordspec.AnyWordSpec
 
     "calling apply on valid request parameters with sort given and other params" should {
       "return the sortOrder param" in {
-        val result = QueryParameters.apply(Map("sortOrder" -> Seq("desc"), "filterBy" -> Seq("name")))
+        val result = QueryParameters.apply(
+          Map("sortOrder" -> Seq("desc"), "filterBy" -> Seq("name"))
+        )
         result shouldBe Some("desc")
       }
     }
