@@ -1,6 +1,6 @@
 package controllers
 
-import akka.actor.ActorSystem
+import csvparser.CSVFilePath.{PowernessCSVFilePath, SpeedCSVFilePath}
 import csvparser.SuperMarioCharactersParser
 import models.{SearchRequest, SuperMarioCharacter, SuperMarioCharacterPowerModel, SuperMarioCharacterSpeedModel}
 import play.api.libs.json._
@@ -11,12 +11,11 @@ import javax.inject._
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents, actorSystem: ActorSystem)(implicit exec: ExecutionContext) extends AbstractController(cc) {
-  def getAllNames: Action[AnyContent] = Action {
-    val superMarioCharactersParser = new SuperMarioCharactersParser()
-    val csvPowerFilePath = "app/resources/super-mario-characters-power.csv"
-    val allPowerItems = superMarioCharactersParser.readAllItems(csvPowerFilePath)
+class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents)(implicit exec: ExecutionContext) extends AbstractController(cc) {
+  private val superMarioCharactersParser = new SuperMarioCharactersParser()
 
+  def getAllNames: Action[AnyContent] = Action {
+    val allPowerItems = superMarioCharactersParser.readAllItems(PowernessCSVFilePath)
     val powerItems = allPowerItems.map(powerItemRaw =>
       SuperMarioCharactersParser.getSuperMarioCharactersPowerFromCsvLine(powerItemRaw)
     )
@@ -27,21 +26,18 @@ class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents, ac
 
   def getAllCharactersSorted: Action[AnyContent] = Action { request =>
     val maybeSortOrderParam = QueryParameters(request.queryString)
-    val superMarioCharactersParser = new SuperMarioCharactersParser()
-    val csvPowerFilePath = "app/resources/super-mario-characters-power.csv"
-    val allPowerItems = superMarioCharactersParser.readAllItems(csvPowerFilePath)
 
-    val powerItems = allPowerItems.map(powerItemRaw =>
-      SuperMarioCharactersParser.getSuperMarioCharactersPowerFromCsvLineMap(powerItemRaw)
-    ).toMap
+    val powerItems = readPowerItems()
+    val speedItems = readSpeedItems()
 
-    val csvSpeedFilePath = "app/resources/super-mario-characters-speed.csv"
-    val allSpeedItems = superMarioCharactersParser.readAllItems(csvSpeedFilePath)
-    val speedItems = allSpeedItems.map(speedItemRaw =>
-      SuperMarioCharactersParser.getSuperMarioCharactersSpeedFromCsvLineMap(speedItemRaw)
-    ).toMap
-
-    val allCharacters = powerItems.keys.map(key => SuperMarioCharacter(name = key, firstGame = powerItems(key).firstGame, power = calculatePower(speedItems(key), powerItems(key)), speed = speedItems(key).speed)).toList
+    val allCharacters = powerItems.keys.map(key =>
+      SuperMarioCharacter(
+        name = key,
+        firstGame = powerItems(key).firstGame,
+        power = calculatePower(speedItems(key),
+          powerItems(key)),
+        speed = speedItems(key).speed)
+    ).toList
 
     val sortedCharacters = maybeSortOrderParam match {
       case Some("asc") => allCharacters.sortBy(characters => characters.power)
@@ -56,19 +52,8 @@ class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents, ac
     val maybeJson = request.body.asJson
     val maybeSearchRequest = maybeJson.map(json => Json.fromJson[SearchRequest](json))
 
-    val superMarioCharactersParser = new SuperMarioCharactersParser()
-    val csvPowerFilePath = "app/resources/super-mario-characters-power.csv"
-    val allPowerItems = superMarioCharactersParser.readAllItems(csvPowerFilePath)
-
-    val powerItems = allPowerItems.map(powerItemRaw =>
-      SuperMarioCharactersParser.getSuperMarioCharactersPowerFromCsvLineMap(powerItemRaw)
-    ).toMap
-
-    val csvSpeedFilePath = "app/resources/super-mario-characters-speed.csv"
-    val allSpeedItems = superMarioCharactersParser.readAllItems(csvSpeedFilePath)
-    val speedItems = allSpeedItems.map(speedItemRaw =>
-      SuperMarioCharactersParser.getSuperMarioCharactersSpeedFromCsvLineMap(speedItemRaw)
-    ).toMap
+    val powerItems = readPowerItems()
+    val speedItems = readSpeedItems()
 
     maybeSearchRequest.map {
       case JsSuccess(searchRequest, _) =>
@@ -77,15 +62,20 @@ class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents, ac
         Ok(Json.toJson(foundCharacters).toString())
       case JsError(errors) => InternalServerError(errors.toString())
     }.getOrElse {
-      val foundCharacters = powerItems.keys.map(characterName => SuperMarioCharacter(name = characterName, firstGame = powerItems(characterName).firstGame, power = calculatePower(speedItems(characterName), powerItems(characterName)), speed = speedItems(characterName).speed)).toList
+      val foundCharacters = powerItems.keys.map(characterName =>
+        SuperMarioCharacter(
+          name = characterName,
+          firstGame = powerItems(characterName).firstGame,
+          power = calculatePower(speedItems(characterName),
+            powerItems(characterName)),
+          speed = speedItems(characterName).speed
+        )).toList
       Ok(Json.toJson(foundCharacters).toString())
     }
 
   }
 
   def create: Action[AnyContent] = Action { request =>
-    val superMarioCharactersParser = new SuperMarioCharactersParser()
-
     val maybeJson = request.body.asJson
     val maybeSuperMarioCharacter = maybeJson.map(json => Json.fromJson[SuperMarioCharacter](json))
 
@@ -101,7 +91,6 @@ class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents, ac
 
   def update: Action[AnyContent] = Action { request =>
     implicit val superMarioCharacterReads: Reads[SuperMarioCharacter] = Json.reads[SuperMarioCharacter]
-    val superMarioCharactersParser = new SuperMarioCharactersParser()
 
     val maybeJson = request.body.asJson
     val maybeSuperMarioCharacter = maybeJson.map(json => Json.fromJson[SuperMarioCharacter](json))
@@ -118,5 +107,21 @@ class SuperMarioCharactersAsyncController @Inject()(cc: ControllerComponents, ac
 
   private def calculatePower(speedItem: SuperMarioCharacterSpeedModel, powerItem: SuperMarioCharacterPowerModel): Double = {
     powerItem.powerfulness * 100 / speedItem.speed
+  }
+
+  private def readSpeedItems(): Map[String, SuperMarioCharacterSpeedModel] = {
+    val allSpeedItems = superMarioCharactersParser.readAllItems(SpeedCSVFilePath)
+    val speedItems = allSpeedItems.map(speedItemRaw =>
+      SuperMarioCharactersParser.getSuperMarioCharactersSpeedFromCsvLineMap(speedItemRaw)
+    ).toMap
+    speedItems
+  }
+
+  private def readPowerItems(): Map[String, SuperMarioCharacterPowerModel] = {
+    val allPowerItems = superMarioCharactersParser.readAllItems(PowernessCSVFilePath)
+    val powerItems = allPowerItems.map(powerItemRaw =>
+      SuperMarioCharactersParser.getSuperMarioCharactersPowerFromCsvLineMap(powerItemRaw)
+    ).toMap
+    powerItems
   }
 }
