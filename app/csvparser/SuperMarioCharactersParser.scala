@@ -17,9 +17,13 @@ import csvparser.CSVFilePath._
 
 
 trait ISuperMarioCharactersParser {
-  def readAllItems(
-                    csvFilePath: CSVFilePath
-                  ): List[List[String]]
+  def getReader(csvFilePath: String): CSVReader
+
+  def readAllItems(csvFilePath: CSVFilePath): List[List[String]]
+
+  def writeCharacter(superMarioCharacter: SuperMarioCharacter): Unit
+
+  def updateCharacter(superMarioCharacter: SuperMarioCharacter): Unit
 }
 
 class SuperMarioCharactersParser @Inject() extends ISuperMarioCharactersParser {
@@ -29,9 +33,27 @@ class SuperMarioCharactersParser @Inject() extends ISuperMarioCharactersParser {
   private val allLinesPower = Source.fromFile(csvPowerFilePath).getLines.toSeq
   private val allLinesSpeed = Source.fromFile(csvSpeedFilePath).getLines.toSeq
 
-
-  implicit object MyFormat extends DefaultCSVFormat {
+  private implicit object MyFormat extends DefaultCSVFormat {
     override val delimiter = '|'
+  }
+
+  def getReader(csvFilePath: String): CSVReader = {
+    CSVReader.open(new File(csvFilePath))
+  }
+
+  def readAllItems(csvFilePath: CSVFilePath): List[List[String]] = {
+    val reader = if (csvFilePath == SpeedCSVFilePath) getReader(csvSpeedFilePath) else getReader(csvPowerFilePath)
+    reader.all().drop(1)
+  }
+
+  def writeCharacter(superMarioCharacter: SuperMarioCharacter): Unit = {
+    writeSpeedLine(csvSpeedFilePath, superMarioCharacter)
+    writePowerLine(csvPowerFilePath, superMarioCharacter)
+  }
+
+  def updateCharacter(superMarioCharacter: SuperMarioCharacter): Unit = {
+    updatePowerLine(superMarioCharacter)
+    updateSpeedLine(superMarioCharacter)
   }
 
   private def writeSpeedLine(csvFilePath: String, superMarioCharacter: SuperMarioCharacter): Unit = {
@@ -48,27 +70,6 @@ class SuperMarioCharactersParser @Inject() extends ISuperMarioCharactersParser {
 
     val superMarioPowerModel = SuperMarioCharactersPower.apply(superMarioCharacter)
     writer.writeRow(SuperMarioCharactersPower.toSeq(superMarioPowerModel))
-  }
-
-  def getReader(csvFilePath: String): CSVReader = {
-    CSVReader.open(new File(csvFilePath))
-  }
-
-  def readAllItems(
-                    csvFilePath: CSVFilePath
-                  ): List[List[String]] = {
-    val reader = if (csvFilePath == SpeedCSVFilePath) getReader(csvSpeedFilePath) else getReader(csvPowerFilePath)
-    reader.all().drop(1)
-  }
-
-  def writeCharacter(superMarioCharacter: SuperMarioCharacter): Unit = {
-    writeSpeedLine(csvSpeedFilePath, superMarioCharacter)
-    writePowerLine(csvPowerFilePath, superMarioCharacter)
-  }
-
-  def updateCharacter(superMarioCharacter: SuperMarioCharacter): Unit = {
-    updatePowerLine(superMarioCharacter)
-    updateSpeedLine(superMarioCharacter)
   }
 
   private def updateSpeedLine(superMarioCharacter: SuperMarioCharacter): Unit = {
