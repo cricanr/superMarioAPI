@@ -13,4 +13,3 @@ libraryDependencies ++= Seq(
   "com.github.tototoshi" %% "scala-csv" % "1.3.10",
   jdbc , ehcache , ws , specs2 % Test , guice,
 )
-      

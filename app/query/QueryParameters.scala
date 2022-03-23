@@ -10,8 +10,10 @@ object QueryParameters {
     maybeSortOrder
   }
 
-  private def getStringParameter(query: Map[String, Seq[String]],
-                                 paramName: String): Option[String] = {
+  private def getStringParameter(
+      query: Map[String, Seq[String]],
+      paramName: String
+  ): Option[String] = {
     query.get(paramName).flatMap(_.headOption)
   }
 }
