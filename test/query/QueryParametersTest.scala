@@ -3,7 +3,7 @@ package query
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class QueryParametersTest extends AnyWordSpec with Matchers {
+  class QueryParametersTest extends AnyWordSpec with Matchers {
   "The QueryParameters" when {
     "calling apply on valid empty request parameters" should {
       "return nothing" in {
