@@ -1,4 +1,8 @@
 import com.google.inject.AbstractModule
+import csvparser.{ISuperMarioCharactersParser, SuperMarioCharactersParser}
+import net.codingwell.scalaguice.ScalaModule
+import services.{ISuperMarioCharactersService, SuperMarioCharactersService}
+
 import java.time.Clock
 
 /** This class is a Guice module that tells Guice how to bind several
@@ -10,10 +14,15 @@ import java.time.Clock
   * adding `play.modules.enabled` settings to the `application.conf`
   * configuration file.
   */
-class Module extends AbstractModule {
+class Module extends AbstractModule with ScalaModule {
 
   override def configure(): Unit = {
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone)
+    bind[ISuperMarioCharactersService]
+      .to[SuperMarioCharactersService]
+      .asEagerSingleton()
+    bind[ISuperMarioCharactersParser]
+      .to[SuperMarioCharactersParser]
+      .asEagerSingleton()
   }
-
 }

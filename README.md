@@ -8,3 +8,4 @@ TODO:
 5) Write README.md 
 6) Make presentation
 7) Add docker container (optional)
+8) Added DI - done

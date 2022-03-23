@@ -1,7 +1,8 @@
 package services
 
+import com.google.inject.Inject
 import csvparser.CSVFilePath.{PowernessCSVFilePath, SpeedCSVFilePath}
-import csvparser.SuperMarioCharactersParser
+import csvparser.{ISuperMarioCharactersParser, SuperMarioCharactersParser}
 import models.{
   SearchRequest,
   SuperMarioCharacter,
@@ -11,11 +12,18 @@ import models.{
 
 trait ISuperMarioCharactersService {
   def getAllNames: List[String]
+  def getAllCharactersSorted(
+      maybeSortOrderParam: Option[String]
+  ): List[SuperMarioCharacter]
+  def writeCharacter(superMarioCharacter: SuperMarioCharacter): Unit
+  def updateCharacter(superMarioCharacter: SuperMarioCharacter): Unit
+  def readSpeedItems(): Map[String, SuperMarioCharacterSpeedModel]
+  def readPowerItems(): Map[String, SuperMarioCharacterPowerModel]
 }
 
-class SuperMarioCharactersService extends ISuperMarioCharactersService {
-  private val superMarioCharactersParser = new SuperMarioCharactersParser()
-
+class SuperMarioCharactersService @Inject() (
+    superMarioCharactersParser: ISuperMarioCharactersParser
+) extends ISuperMarioCharactersService {
   def getAllNames: List[String] = {
     val allPowerItems =
       superMarioCharactersParser.readAllItems(PowernessCSVFilePath)
@@ -39,7 +47,8 @@ class SuperMarioCharactersService extends ISuperMarioCharactersService {
         SuperMarioCharacter(
           name = key,
           firstGame = powerItems(key).firstGame,
-          power = calculatePower(speedItems(key), powerItems(key)),
+          power = SuperMarioCharactersService
+            .calculatePower(speedItems(key), powerItems(key)),
           speed = speedItems(key).speed
         )
       )
@@ -57,11 +66,12 @@ class SuperMarioCharactersService extends ISuperMarioCharactersService {
     sortedCharacters
   }
 
-  def calculatePower(
-      speedItem: SuperMarioCharacterSpeedModel,
-      powerItem: SuperMarioCharacterPowerModel
-  ): Double = {
-    powerItem.powerfulness * 100 / speedItem.speed
+  def writeCharacter(superMarioCharacter: SuperMarioCharacter): Unit = {
+    superMarioCharactersParser.writeCharacter(superMarioCharacter)
+  }
+
+  def updateCharacter(superMarioCharacter: SuperMarioCharacter): Unit = {
+    superMarioCharactersParser.updateCharacter(superMarioCharacter)
   }
 
   def readSpeedItems(): Map[String, SuperMarioCharacterSpeedModel] = {
@@ -88,6 +98,15 @@ class SuperMarioCharactersService extends ISuperMarioCharactersService {
       )
       .toMap
     powerItems
+  }
+}
+
+object SuperMarioCharactersService {
+  def calculatePower(
+      speedItem: SuperMarioCharacterSpeedModel,
+      powerItem: SuperMarioCharacterPowerModel
+  ): Double = {
+    powerItem.powerfulness * 100 / speedItem.speed
   }
 
   def composeCharacterItems(
@@ -128,7 +147,6 @@ class SuperMarioCharactersService extends ISuperMarioCharactersService {
           speed = speedItems(characterName).speed
         )
       )
-      .toList
     foundCharacters
   }
 }

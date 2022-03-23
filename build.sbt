@@ -11,5 +11,6 @@ scalaVersion := "2.13.5"
 
 libraryDependencies ++= Seq(
   "com.github.tototoshi" %% "scala-csv" % "1.3.10",
+  "net.codingwell" %% "scala-guice" % "5.0.2",
   jdbc , ehcache , ws , specs2 % Test , guice,
 )

@@ -1,23 +1,25 @@
 package controllers
 
-import csvparser.SuperMarioCharactersParser
 import models.{SearchRequest, SuperMarioCharacter}
 import play.api.libs.json._
 import play.api.mvc._
 import query.QueryParameters
-import services.SuperMarioCharactersService
+import services.ISuperMarioCharactersService
+import services.SuperMarioCharactersService.{
+  composeCharacterItems,
+  filterCharacters
+}
 
 import javax.inject._
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class SuperMarioCharactersAsyncController @Inject() (cc: ControllerComponents)(
-    implicit exec: ExecutionContext
+class SuperMarioCharactersAsyncController @Inject() (
+    superMarioCharactersService: ISuperMarioCharactersService,
+    cc: ControllerComponents
+)(implicit
+    exec: ExecutionContext
 ) extends AbstractController(cc) {
-  private val superMarioCharactersParser = new SuperMarioCharactersParser()
-  private val superMarioCharactersService = new SuperMarioCharactersService()
-
-  import superMarioCharactersService._
 
   def getAllNames: Action[AnyContent] = Action {
     val allCharacters = superMarioCharactersService.getAllNames
@@ -36,8 +38,8 @@ class SuperMarioCharactersAsyncController @Inject() (cc: ControllerComponents)(
     val maybeSearchRequest =
       maybeJson.map(json => Json.fromJson[SearchRequest](json))
 
-    val powerItems = readPowerItems()
-    val speedItems = readSpeedItems()
+    val powerItems = superMarioCharactersService.readPowerItems()
+    val speedItems = superMarioCharactersService.readSpeedItems()
 
     maybeSearchRequest
       .map {
@@ -61,7 +63,7 @@ class SuperMarioCharactersAsyncController @Inject() (cc: ControllerComponents)(
     maybeSuperMarioCharacter
       .map {
         case JsSuccess(superMarioCharacter, _) =>
-          superMarioCharactersParser.writeCharacter(superMarioCharacter)
+          superMarioCharactersService.writeCharacter(superMarioCharacter)
           Ok(Json.toJson(superMarioCharacter).toString)
         case JsError(errors) => InternalServerError(errors.toString())
       }
@@ -81,7 +83,7 @@ class SuperMarioCharactersAsyncController @Inject() (cc: ControllerComponents)(
     maybeSuperMarioCharacter
       .map {
         case JsSuccess(superMarioCharacter, _) =>
-          superMarioCharactersParser.updateCharacter(superMarioCharacter)
+          superMarioCharactersService.updateCharacter(superMarioCharacter)
           Ok(Json.toJson(superMarioCharacter).toString)
         case JsError(errors) => InternalServerError(errors.toString())
       }
