@@ -13,12 +13,18 @@ import models.{
 trait ISuperMarioCharactersService {
   def getAllNames(csvFilePath: String = csvPowerFilePath): List[String]
   def getAllCharactersSorted(
-      maybeSortOrderParam: Option[String]
+      maybeSortOrderParam: Option[String],
+      csvSpeedFilePath: String = csvSpeedFilePath,
+      csvPowerFilePath: String = csvPowerFilePath
   ): List[SuperMarioCharacter]
   def writeCharacter(superMarioCharacter: SuperMarioCharacter): Unit
   def updateCharacter(superMarioCharacter: SuperMarioCharacter): Unit
-  def readSpeedItems(): Map[String, SuperMarioCharacterSpeedModel]
-  def readPowerItems(): Map[String, SuperMarioCharacterPowerModel]
+  def readSpeedItems(
+      csvSpeedFilePath: String = csvSpeedFilePath
+  ): Map[String, SuperMarioCharacterSpeedModel]
+  def readPowerItems(
+      csvPowerFilePath: String = csvPowerFilePath
+  ): Map[String, SuperMarioCharacterPowerModel]
 }
 
 class SuperMarioCharactersService @Inject() (
@@ -37,10 +43,12 @@ class SuperMarioCharactersService @Inject() (
   }
 
   def getAllCharactersSorted(
-      maybeSortOrderParam: Option[String]
+      maybeSortOrderParam: Option[String],
+      csvSpeedFilePath: String = csvSpeedFilePath,
+      csvPowerFilePath: String = csvPowerFilePath
   ): List[SuperMarioCharacter] = {
-    val powerItems = readPowerItems()
-    val speedItems = readSpeedItems()
+    val speedItems = readSpeedItems(csvSpeedFilePath)
+    val powerItems = readPowerItems(csvPowerFilePath)
 
     val allCharacters = powerItems.keys
       .map(key =>
@@ -74,7 +82,9 @@ class SuperMarioCharactersService @Inject() (
     superMarioCharactersParser.updateCharacter(superMarioCharacter)
   }
 
-  def readSpeedItems(): Map[String, SuperMarioCharacterSpeedModel] = {
+  def readSpeedItems(
+      csvSpeedFilePath: String = csvSpeedFilePath
+  ): Map[String, SuperMarioCharacterSpeedModel] = {
     val allSpeedItems =
       superMarioCharactersParser.readAllItems(csvSpeedFilePath)
     val speedItems = allSpeedItems
@@ -87,7 +97,9 @@ class SuperMarioCharactersService @Inject() (
     speedItems
   }
 
-  def readPowerItems(): Map[String, SuperMarioCharacterPowerModel] = {
+  def readPowerItems(
+      csvPowerFilePath: String = csvPowerFilePath
+  ): Map[String, SuperMarioCharacterPowerModel] = {
     val allPowerItems =
       superMarioCharactersParser.readAllItems(csvPowerFilePath)
     val powerItems = allPowerItems
