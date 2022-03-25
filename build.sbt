@@ -18,3 +18,17 @@ libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % "test",
     jdbc , ehcache , ws , specs2 % Test , guice,
 )
+
+mappings in Universal += file("app/resources/super-mario-characters-power.csv") -> "/app/resources/super-mario-characters-power.csv"
+mappings in Universal += file("app/resources/super-mario-characters-speed.csv") -> "/app/resources/super-mario-characters-speed.csv"
+
+import com.typesafe.sbt.packager.docker.DockerChmodType
+import com.typesafe.sbt.packager.docker.DockerPermissionStrategy
+dockerChmodType := DockerChmodType.UserGroupWriteExecute
+dockerPermissionStrategy := DockerPermissionStrategy.CopyChown
+
+val secretKey = "your-key"
+javaOptions in Universal ++= Seq(
+  "-Dpidfile.path=/dev/null",
+  "-Dplay.http.secret.key=" + secretKey
+)
