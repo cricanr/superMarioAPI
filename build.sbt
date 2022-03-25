@@ -15,5 +15,6 @@ libraryDependencies ++= Seq(
   "net.codingwell" %% "scala-guice" % "5.0.2",
   "org.scalatestplus" %% "mockito-3-12" % "3.2.10.0" % "test",
   "org.scalatest" %% "scalatest" % "3.2.11" % Test,
-  jdbc , ehcache , ws , specs2 % Test , guice,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % "test",
+    jdbc , ehcache , ws , specs2 % Test , guice,
 )

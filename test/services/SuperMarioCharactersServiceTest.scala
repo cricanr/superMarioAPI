@@ -12,35 +12,17 @@ import org.mockito.Mockito.{verify, when}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
+import testutils.TestData.{
+  powerLines,
+  speedLines,
+  validPowerFilePath,
+  validSpeedFilePath
+}
 
 class SuperMarioCharactersServiceTest
     extends AnyWordSpec
     with Matchers
     with MockitoSugar {
-  private val validPowerFilePath =
-    "test/resources/valid-super-mario-characters-power.csv"
-  private val validSpeedFilePath =
-    "test/resources/valid-super-mario-characters-speed.csv"
-
-  private val powerLines = List(
-    List(
-      "3 Musty Fears",
-      "Super Mario RPG: Legend of the Seven Stars",
-      "4.62114"
-    ),
-    List(
-      "Admiral Bobbery",
-      "Paper Mario: The Thousand-Year Door",
-      "50.3991"
-    ),
-    List("Aerodent", "Wario Land 4", "62.536")
-  )
-
-  private val speedLines = List(
-    List("3 Musty Fears", "37.999"),
-    List("Admiral Bobbery", "65.1533"),
-    List("Aerodent", "22.9676")
-  )
 
   private val aerodent =
     SuperMarioCharacter("Aerodent", "Wario Land 4", 272.2792107142235, 22.9676)
