@@ -26,9 +26,3 @@ import com.typesafe.sbt.packager.docker.DockerChmodType
 import com.typesafe.sbt.packager.docker.DockerPermissionStrategy
 dockerChmodType := DockerChmodType.UserGroupWriteExecute
 dockerPermissionStrategy := DockerPermissionStrategy.CopyChown
-
-val secretKey = "your-key"
-javaOptions in Universal ++= Seq(
-  "-Dpidfile.path=/dev/null",
-  "-Dplay.http.secret.key=" + secretKey
-)
