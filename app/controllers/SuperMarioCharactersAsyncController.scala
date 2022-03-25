@@ -66,7 +66,8 @@ class SuperMarioCharactersAsyncController @Inject() (
         case JsSuccess(superMarioCharacter, _) =>
           superMarioCharactersService.writeCharacter(superMarioCharacter)
           Ok(Json.toJson(superMarioCharacter).toString)
-        case JsError(errors) => InternalServerError(errors.toString())
+        case JsError(errors) =>
+          InternalServerError("Json validation error, incorrect body posted")
       }
       .getOrElse {
         BadRequest("Invalid input given in body")
@@ -86,7 +87,8 @@ class SuperMarioCharactersAsyncController @Inject() (
         case JsSuccess(superMarioCharacter, _) =>
           superMarioCharactersService.updateCharacter(superMarioCharacter)
           Ok(Json.toJson(superMarioCharacter).toString)
-        case JsError(errors) => InternalServerError(errors.toString())
+        case JsError(errors) =>
+          InternalServerError("Json validation error, incorrect body posted")
       }
       .getOrElse {
         BadRequest("Invalid input given in body")

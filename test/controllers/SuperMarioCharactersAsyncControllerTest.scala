@@ -1,7 +1,7 @@
 package controllers
 
 import mocks.SuperMarioCharactersServiceMock
-import models.SearchRequest
+import models.{SearchRequest, SuperMarioCharacter}
 import services.ISuperMarioCharactersService
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -12,7 +12,6 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Result
-import play.api.mvc.Results.InternalServerError
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
 
@@ -146,6 +145,84 @@ class SuperMarioCharactersAsyncControllerTest
         val content = contentAsString(result)
         status(result) shouldBe OK
         content shouldBe ("""[{"name":"3 Musty Fears","firstGame":"Super Mario RPG: Legend of the Seven Stars","power":12.161214768809705,"speed":37.999},{"name":"Admiral Bobbery","firstGame":"Paper Mario: The Thousand-Year Door","power":77.35463898221579,"speed":65.1533},{"name":"Aerodent","firstGame":"Wario Land 4","power":272.2792107142235,"speed":22.9676}]""".stripMargin)
+      }
+    }
+
+    "doing a successful POST on /create" should {
+      "should return a http 200 success with the created JSON character" in {
+        val controller: SuperMarioCharactersAsyncController =
+          app.injector.instanceOf[SuperMarioCharactersAsyncController]
+        val character =
+          SuperMarioCharacter("test-character", "first-game", 12.1, 34.9)
+        val jsonCharacter = Json.toJson(character)
+        val result: Future[Result] = controller.create.apply(
+          FakeRequest(POST, "/create")
+            .withHeaders(
+              Helpers.CONTENT_TYPE -> "application/json"
+            )
+            .withJsonBody(jsonCharacter)
+        )
+        val content = contentAsString(result)
+
+        status(result) shouldBe OK
+        content shouldBe ("""{"name":"test-character","firstGame":"first-game","power":12.1,"speed":34.9}""".stripMargin)
+      }
+    }
+
+    "doing a POST on /create with invalid JSON body format" should {
+      "should return a http 500 failure" in {
+        val controller: SuperMarioCharactersAsyncController =
+          app.injector.instanceOf[SuperMarioCharactersAsyncController]
+        val result: Future[Result] = controller.create.apply(
+          FakeRequest(POST, "/create")
+            .withHeaders(
+              Helpers.CONTENT_TYPE -> "application/json"
+            )
+            .withJsonBody(Json.toJson("cat"))
+        )
+        val content = contentAsString(result)
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        content shouldBe ("""Json validation error, incorrect body posted""".stripMargin)
+      }
+    }
+
+    "doing a successful POST on /update" should {
+      "should return a http 200 success with the updated JSON character" in {
+        val controller: SuperMarioCharactersAsyncController =
+          app.injector.instanceOf[SuperMarioCharactersAsyncController]
+        val character =
+          SuperMarioCharacter("test-character", "first-game", 12.1, 34.9)
+        val jsonCharacter = Json.toJson(character)
+        val result: Future[Result] = controller.update.apply(
+          FakeRequest(POST, "/create")
+            .withHeaders(
+              Helpers.CONTENT_TYPE -> "application/json"
+            )
+            .withJsonBody(jsonCharacter)
+        )
+        val content = contentAsString(result)
+
+        status(result) shouldBe OK
+        content shouldBe ("""{"name":"test-character","firstGame":"first-game","power":12.1,"speed":34.9}""".stripMargin)
+      }
+    }
+
+    "doing a POST on /update with invalid JSON body format" should {
+      "should return a http 500 failure" in {
+        val controller: SuperMarioCharactersAsyncController =
+          app.injector.instanceOf[SuperMarioCharactersAsyncController]
+        val result: Future[Result] = controller.update.apply(
+          FakeRequest(POST, "/create")
+            .withHeaders(
+              Helpers.CONTENT_TYPE -> "application/json"
+            )
+            .withJsonBody(Json.toJson("cat"))
+        )
+        val content = contentAsString(result)
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        content shouldBe ("""Json validation error, incorrect body posted""".stripMargin)
       }
     }
   }
