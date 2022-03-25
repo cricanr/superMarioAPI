@@ -295,10 +295,10 @@ class SuperMarioCharactersServiceTest
       val superMarioCharactersService =
         new SuperMarioCharactersService(superMarioCharactersParserMock)
 
-      val speedItems =
+      val powerItems =
         superMarioCharactersService.readPowerItems(validPowerFilePath)
 
-      speedItems shouldBe (
+      powerItems shouldBe (
         Map(
           "3 Musty Fears" -> SuperMarioCharacterPowerModel(
             "Super Mario RPG: Legend of the Seven Stars",

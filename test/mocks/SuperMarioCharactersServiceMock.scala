@@ -43,17 +43,33 @@ class SuperMarioCharactersServiceMock extends ISuperMarioCharactersService {
     )
   }
 
-  override def writeCharacter(superMarioCharacter: SuperMarioCharacter): Unit =
-    ???
+  override def writeCharacter(
+      superMarioCharacter: SuperMarioCharacter
+  ): Unit = {}
 
-  override def updateCharacter(superMarioCharacter: SuperMarioCharacter): Unit =
-    ???
+  override def updateCharacter(
+      superMarioCharacter: SuperMarioCharacter
+  ): Unit = {}
 
   override def readSpeedItems(
       csvSpeedFilePath: String
-  ): Map[String, SuperMarioCharacterSpeedModel] = ???
+  ): Map[String, SuperMarioCharacterSpeedModel] = Map(
+    "3 Musty Fears" -> SuperMarioCharacterSpeedModel(37.999),
+    "Admiral Bobbery" -> SuperMarioCharacterSpeedModel(65.1533),
+    "Aerodent" -> SuperMarioCharacterSpeedModel(22.9676)
+  )
 
   override def readPowerItems(
       csvPowerFilePath: String
-  ): Map[String, SuperMarioCharacterPowerModel] = ???
+  ): Map[String, SuperMarioCharacterPowerModel] = Map(
+    "3 Musty Fears" -> SuperMarioCharacterPowerModel(
+      "Super Mario RPG: Legend of the Seven Stars",
+      4.62114
+    ),
+    "Admiral Bobbery" -> SuperMarioCharacterPowerModel(
+      "Paper Mario: The Thousand-Year Door",
+      50.3991
+    ),
+    "Aerodent" -> SuperMarioCharacterPowerModel("Wario Land 4", 62.536)
+  )
 }

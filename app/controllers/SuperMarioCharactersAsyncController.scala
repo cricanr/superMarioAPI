@@ -47,7 +47,8 @@ class SuperMarioCharactersAsyncController @Inject() (
           val foundCharacters =
             filterCharacters(searchRequest, powerItems, speedItems)
           Ok(Json.toJson(foundCharacters).toString())
-        case JsError(errors) => InternalServerError(errors.toString())
+        case JsError(errors) =>
+          InternalServerError("Json validation error, incorrect body posted")
       }
       .getOrElse {
         val foundCharacters = composeCharacterItems(powerItems, speedItems)
