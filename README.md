@@ -62,6 +62,7 @@ For installing Postman locally check this link: https://www.postman.com/download
 # Further development:
 As a minimal solution I have not considered for now some points that should be addressed:
 * error handling, this is definitely needed whenever we do IO operations, e.g. the CSV parser class and then any error should bubble up and be handled in the REST API
+* more test cases especially for negative cases not treated due to lack of error handling in this version
 * running on local machine without any scaling and optimization is definitely not going to perform well in a real prod requirements environment. In a real env we should consider having a cluster of REST API instances and more instances of the IO level
 * logging should be added to our application
 * add a log injection mechanism to collect logs for further monitoring
