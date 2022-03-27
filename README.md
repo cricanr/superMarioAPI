@@ -20,6 +20,11 @@ Run application:
 
 
 #Architecture & code notes:
+The application is a REST API architecture developed in Scala using PlayFramework. The components are: 
+* CSV Parser - data layer
+* a Service class - business logic layer
+* data models - transport layer objects
+* the controller class which defines the REST API interface and calls the service that will trigger the business logic, data layer operations
 
 ## Docker Version:
 You can also create a docker image of the application and run it using docker
@@ -56,7 +61,8 @@ For installing Postman locally check this link: https://www.postman.com/download
 
 # Further development:
 As a minimal solution I have not considered for now some points that should be addressed:
-
+* error handling, this is definitely needed whenever we do IO operations, e.g. the CSV parser class and then any error should bubble up and be handled in the REST API
+* running on local machine without any scaling and optimization is definitely not going to perform well in a real prod requirements environment. In a real env we should consider having a cluster of REST API instances and more instances of the IO level
 * logging should be added to our application
 * add a log injection mechanism to collect logs for further monitoring
 * add configuration entries
