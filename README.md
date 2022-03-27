@@ -34,17 +34,17 @@ URL: `http://localhost:9000/names`
 
 BODY: 
 
-Response: 
+Response: `["3 Musty Fears","4.1 and 4.2","5-Volt"]` (just an example)
 
 
-2) Get all characters sorted (asc or desc):
+2) Get all characters sorted (`asc` or `desc`):
 HTTP method: GET
 
 URL: `http://localhost:9000/charactersSorted?sortOrder=asc`
 
 BODY:
 
-Response:
+Response: `[{"name":"Piranha Bean","firstGame":"Mario & Luigi: Superstar Saga","power":0.13101359959585632,"speed":99.3706},{"name":"Mushroom King","firstGame":"Super Mario Bros. 3","power":0.4092479276900876,"speed":89.393}]`
 
 
 3) Search characters:
@@ -54,7 +54,7 @@ URL: `http://localhost:9000/search`
 
 BODY: `{"names": ["Aerodent"]}`
 
-Response: 
+Response: `[{"name":"Aerodent","firstGame":"Wario Land 4","power":272.2792107142235,"speed":22.9676}]` (just an example)
 
 
 4) Create new character: 
@@ -64,7 +64,7 @@ URL: `http://localhost:9000/create`
 
 BODY: `{"name": "test", "firstGame": "test1", "power": 232.1, "speed": 123}`
 
-Response: 
+Response: `{"name":"test2","firstGame":"test2","power":232.1,"speed":123}`
 
 
 5) Update existing character: 
@@ -72,9 +72,9 @@ HTTP method: POST
 
 URL: `http://localhost:9000/create`
 
-BODY: `{"name": "test", "firstGame": "test1", "power": 232.1, "speed": 123}`
+BODY: `{"name": "test", "firstGame": "test1", "power": 4.1, "speed": 6}`
 
-Response: 
+Response: `{"name":"test","firstGame":"test1","power":4.1,"speed":6}`
 
 
 ## Docker Version:
@@ -118,6 +118,7 @@ As a minimal solution I have not considered for now some points that should be a
 * running on local machine without any scaling and optimization is definitely not going to perform well in a real prod requirements environment. In a real env we should consider having a cluster of REST API instances and more instances of the IO level
 * logging should be added to our application
 * add a log injection mechanism to collect logs for further monitoring
+* metrics & logging dashboard for monitoring app
 * add configuration entries
 * add CI/CD
 * add API documentation using Swagger API: https://swagger.io/
