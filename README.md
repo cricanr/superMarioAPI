@@ -121,6 +121,7 @@ As a minimal solution I have not considered for now some points that should be a
 * add configuration entries
 * add CI/CD
 * add API documentation using Swagger API: https://swagger.io/
+* add authentification and authorization for the REST API
 
 
 # Scalafmt:
