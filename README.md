@@ -19,12 +19,43 @@ Run application:
 ```sbt run```
 
 
-#Architecture & code notes:
+# Architecture & code notes:
 The application is a REST API architecture developed in Scala using PlayFramework. The components are: 
 * CSV Parser - data layer
 * a Service class - business logic layer
 * data models - transport layer objects
 * the controller class which defines the REST API interface and calls the service that will trigger the business logic, data layer operations
+
+# API Specifications:
+1) Get all character names unsorted:
+HTTP method: GET
+URL: `http://localhost:9000/names`
+BODY: 
+Response: 
+
+2) Get all characters sorted (asc or desc):
+HTTP method: GET
+URL: `http://localhost:9000/charactersSorted?sortOrder=asc`
+BODY:
+Response:
+
+3) Search characters:
+HTTP method: POST (for simplicity to use rather then GET)
+URL: `http://localhost:9000/search`
+BODY: `{"names": ["Aerodent"]}`
+Response: 
+
+4) Create new character: 
+HTTP method: POST
+URL: `http://localhost:9000/create`
+BODY: `{"name": "test", "firstGame": "test1", "power": 232.1, "speed": 123}`
+Response: 
+
+5) Update existing character: 
+HTTP method: POST
+URL: `http://localhost:9000/create`
+BODY: `{"name": "test", "firstGame": "test1", "power": 232.1, "speed": 123}`
+Response: 
 
 ## Docker Version:
 You can also create a docker image of the application and run it using docker
