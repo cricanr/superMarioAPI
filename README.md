@@ -69,6 +69,7 @@ As a minimal solution I have not considered for now some points that should be a
 * add a log injection mechanism to collect logs for further monitoring
 * add configuration entries
 * add CI/CD
+* add API documentation using Swagger API: https://swagger.io/
 
 
 # Scalafmt:
