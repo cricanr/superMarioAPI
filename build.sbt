@@ -12,7 +12,7 @@ scalaVersion := "2.13.5"
 
 libraryDependencies ++= Seq(
   "com.github.tototoshi" %% "scala-csv" % "2.0.0",
-  "net.codingwell" %% "scala-guice" % "5.0.2",
+  "net.codingwell" %% "scala-guice" % "7.0.0",
   "org.scalatestplus" %% "mockito-3-12" % "3.2.10.0" % "test",
   "org.scalatest" %% "scalatest" % "3.2.11" % Test,
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % "test",
