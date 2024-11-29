@@ -1,0 +1,11 @@
+[pr_reviewer]
+extra_instructions="""\
+In the `possible issues` section, emphasize the following:
+- Is the code logic efficient?
+-
+"""
+inline_code_comments=true
+require_score_review=true
+require_can_be_split_review=true
+require_soc2_ticket=true
+num_code_suggestions="0"
