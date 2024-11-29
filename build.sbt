@@ -11,7 +11,7 @@ resolvers += "Akka Snapshot Repository" at "https://repo.akka.io/snapshots/"
 scalaVersion := "2.13.5"
 
 libraryDependencies ++= Seq(
-  "com.github.tototoshi" %% "scala-csv" % "1.3.10",
+  "com.github.tototoshi" %% "scala-csv" % "2.0.0",
   "net.codingwell" %% "scala-guice" % "5.0.2",
   "org.scalatestplus" %% "mockito-3-12" % "3.2.10.0" % "test",
   "org.scalatest" %% "scalatest" % "3.2.11" % Test,
